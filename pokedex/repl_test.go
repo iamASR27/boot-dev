@@ -4,6 +4,7 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"testing"
+	"time"
 
 	"github.com/iamASR27/pokedex/internal/pokeapi"
 )
@@ -50,7 +51,8 @@ func TestFetchLocationAreaPageReturnsNextAndPrevious(t *testing.T) {
 	}))
 	defer server.Close()
 
-	page, err := pokeapi.FetchLocationAreaPage(server.URL + "/location-area?offset=20&limit=20")
+	client := pokeapi.NewClient(time.Minute)
+	page, err := client.FetchLocationAreaPage(server.URL + "/location-area?offset=20&limit=20")
 	if err != nil {
 		t.Fatalf("fetchLocationAreaPage returned error: %v", err)
 	}

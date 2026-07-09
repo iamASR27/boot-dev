@@ -4,11 +4,17 @@ import (
 	"bufio"
 	"fmt"
 	"os"
+	"time"
+
+	"github.com/iamASR27/pokedex/internal/pokeapi"
 )
 
 func main() {
 	scanner := bufio.NewScanner(os.Stdin)
-	cfg := &config{}
+	cfg := &config{
+		client:  pokeapi.NewClient(5 * time.Minute),
+		pokedex: make(map[string]Pokemon),
+	}
 	for {
 		fmt.Print("Pokedex > ")
 		if !scanner.Scan() {
@@ -28,7 +34,12 @@ func main() {
 			continue
 		}
 
-		if err := cmd.callback(cfg); err != nil {
+		var args []string
+		if len(cleanedInput) > 1 {
+			args = cleanedInput[1:]
+		}
+
+		if err := cmd.callback(cfg, args); err != nil {
 			fmt.Println("Error:", err)
 		}
 	}
